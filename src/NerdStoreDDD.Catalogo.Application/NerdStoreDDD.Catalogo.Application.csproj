@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.0.1" />
+    <ProjectReference Include="..\NerdStoreDDD.Catalogo.Data\NerdStoreDDD.Catalogo.Data.csproj" />
+    <ProjectReference Include="..\NerdStoreDDD.Catalogo.Domain\NerdStoreDDD.Catalogo.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NerdStoreDDD.Core\NerdStoreDDD.Core.csproj" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
 
 </Project>

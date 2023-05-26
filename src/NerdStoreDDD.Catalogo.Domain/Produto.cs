@@ -15,6 +15,7 @@ public class Produto : Entity, IAggregateRoot
 
     public Guid CategoriaId { get; private set; }
     public Categoria Categoria { get; private set; } = default!;
+    public Dimensoes Dimensoes { get; private set; } = default!;
 
     public Produto(string nome,
                    string descricao,
@@ -22,7 +23,8 @@ public class Produto : Entity, IAggregateRoot
                    decimal valor,
                    Guid categoriaId,
                    DateTime dataCadastro,
-                   string imagem)
+                   string imagem,
+                   Dimensoes dimensoes)
     {
         Nome = nome;
         Descricao = descricao;
@@ -31,6 +33,9 @@ public class Produto : Entity, IAggregateRoot
         CategoriaId = categoriaId;
         DataCadastro = dataCadastro;
         Imagem = imagem;
+        Dimensoes = dimensoes;
+
+        Validar();
     }
 
     public void Ativar() => Ativo = true;
@@ -45,12 +50,14 @@ public class Produto : Entity, IAggregateRoot
 
     public void AlterarDescricao(string descricao)
     {
+        Validacoes.ValidarSeVazio(descricao, "O campo Descricao do produto não pode estar vazio");
         Descricao = descricao;
     }
 
     public void DebitarEstoque(int quantidade)
     {
         if (quantidade < 0) quantidade *= -1;
+        if (!PossuiEstoque(quantidade)) throw new DomainException("Estoque insuficiente");
         QuantidadeEstoque -= quantidade;
     }
 
@@ -66,23 +73,10 @@ public class Produto : Entity, IAggregateRoot
 
     public void Validar()
     {
-
-    }
-}
-
-public class Categoria : Entity
-{
-    public string Nome { get; private set; } = string.Empty;
-    public int Codigo { get; private set; }
-
-    public Categoria(string nome, int codigo)
-    {
-        Nome = nome;
-        Codigo = codigo;
-    }
-
-    public override string ToString()
-    {
-        return $"{Nome} - {Codigo}";
+        Validacoes.ValidarSeVazio(Nome, "O campo Nome do produto não pode estar vazio");
+        Validacoes.ValidarSeVazio(Descricao, "O campo Descricao do produto não pode estar vazio");
+        Validacoes.ValidarSeIgual(CategoriaId, Guid.Empty, "O campo CategoriaId do produto não pode estar vazio");
+        Validacoes.ValidarSeMenorQue(Valor, 1, "O campo Valor do produto não pode se menor igual a 0");
+        Validacoes.ValidarSeVazio(Imagem, "O campo Imagem do produto não pode estar vazio");
     }
 }
